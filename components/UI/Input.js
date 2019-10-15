@@ -24,23 +24,23 @@ const inputReducer = (state, action) => {
 const Input = props => {
 
     const [inputState, dispatch] = useReducer(inputReducer, {
-        value: props.initialValue? props.initialValue :  '',
+        value: props.initialValue ? props.initialValue : '',
         isValid: props.initiallyValid,
         touched: false
     })
 
     const { onInputChange, id } = props;
 
-    useEffect(()=>{
+    useEffect(() => {
         //отправляю в стейт инпута в перент только если пользователь перестал пользоваться инпутом
-        if(inputState.touched) {
+        if (inputState.touched) {
             onInputChange(id, inputState.value, inputState.isValid);
         }
     }, [inputState, onInputChange]);
 
     const lostFocusHandler = () => {
         dispatch({ type: 'INPUT_BLUR' })
-    }    
+    }
 
     const textChangedHandler = text => {
         let isValid = true;
@@ -60,6 +60,9 @@ const Input = props => {
         if (props.minLength != null && text.length < props.minLength) {
             isValid = false;
         }
+        // if(props.url != null && !validator.isURL(text)){
+        //     isValid = false;
+        // }
 
 
         dispatch({ type: 'INPUT_CHANGE', value: text, isValid });
@@ -76,7 +79,11 @@ const Input = props => {
                 onBlur={lostFocusHandler}
                 underlineColorAndroid='transparent'
             />
-            {!inputState.isValid && <Text>{props.errorText}</Text>}
+            {!inputState.isValid && inputState.touched && (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{props.errorText}</Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -94,6 +101,14 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         borderBottomColor: '#ccc',
         borderBottomWidth: 1
+    },
+    errorContainer: {
+        marginVertical: 5
+    },
+    errorText: {
+        fontFamily: 'open-sans',
+        color: 'red',
+        fontSize: 13
     }
 });
 

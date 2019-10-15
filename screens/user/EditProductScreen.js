@@ -6,7 +6,8 @@ import {
   TextInput,
   StyleSheet,
   Platform,
-  Alert
+  Alert,
+  KeyboardAvoidingView
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -98,34 +99,37 @@ const EditProductScreen = props => {
   }, [dispatchFormState])
 
   return (
-    <ScrollView>
-      <View style={styles.form}>
-        <Input
-          id='title'
-          keyboardType="default"
-          autoCapitalize="sentences"
-          autoCorrect
-          returnKeyType="next"
-          label='Title'
-          errorText='Please enter the valid title'
-          onInputChange={inputChangeHandler} //когда используешь bind не используй useCallback c этим методом, а то
-          //получишь бесконечный цикл, т.к. bind создает новый instanse для этой функции
-          initialValue={editedProduct ? editedProduct.title : ''}
-          initiallyValid={!!editedProduct}
-          required
-        />
-        <Input
-          id='imageUrl'
-          label='Image Url'
-          errorText="Enter the valid url."
-          returnKeyType="next"
-          onInputChange={inputChangeHandler}
-          initialValue={editedProduct ? editedProduct.imageUrl : ''}
-          initiallyValid={!!editedProduct}
-          required
-        />
+    // все эти параметры в KeyboardAvoidingView мастхэв для его работы
+    <KeyboardAvoidingView style={{flex: 1}} behavior='padding' keyboardVerticalOffset={100}>
+      <ScrollView>
+        <View style={styles.form}>
+          <Input
+            id='title'
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect
+            returnKeyType="next"
+            label='Title'
+            errorText='Please enter the valid title'
+            onInputChange={inputChangeHandler} //когда используешь bind не используй useCallback c этим методом, а то
+            //получишь бесконечный цикл, т.к. bind создает новый instanse для этой функции
+            initialValue={editedProduct ? editedProduct.title : ''}
+            initiallyValid={!!editedProduct}
+            required
+          />
+          <Input
+            id='imageUrl'
+            label='Image Url'
+            errorText="Enter the valid url."
+            returnKeyType="next"
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.imageUrl : ''}
+            initiallyValid={!!editedProduct}
+            url
+            required
+          />
 
-        {editedProduct ? undefined : (
+          {editedProduct ? undefined : (
             <Input
               id='price'
               keyboardType="decimal-pad"
@@ -138,20 +142,21 @@ const EditProductScreen = props => {
               required
               min={0}
             />
-        )}
-       <Input
-        id='description'
-        label="Description"
-        keyboardType="default"
-        errorText="Please enter a valid description"
-        onInputChange={inputChangeHandler}
-        initialValue={editedProduct ? editedProduct.description : ''}
-        initiallyValid={!!editedProduct}
-        required
-        minLength={5}
-       />
-      </View>
-    </ScrollView >
+          )}
+          <Input
+            id='description'
+            label="Description"
+            keyboardType="default"
+            errorText="Please enter a valid description"
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.description : ''}
+            initiallyValid={!!editedProduct}
+            required
+            minLength={5}
+          />
+        </View>
+      </ScrollView >
+    </KeyboardAvoidingView>
   );
 };
 
