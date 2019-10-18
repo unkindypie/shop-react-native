@@ -9,23 +9,32 @@ export const SET_PRODUCTS = 'SET_PRODUCTS';
 export const fetchProducts = () => {
   //получаю объект продуктов из бд
   return async dispatch => {
-    const response = await fetch('https://react-native-shop-5c767.firebaseio.com/products.json', {
-      method: 'GET',
-    });
-    //парсю
-    const resData = await response.json();
-    const loadedProducts = [];
-    //перевожу объект в массив, с которым уже работает мой фронтенд
-    for (const key in resData) {
-      loadedProducts.push(new Product(key,
-        'u1',
-        resData[key].title,
-        resData[key].imageUrl,
-        resData[key].description,
-        resData[key].price))
+    try {
+      const response = await fetch('https://react-native-shop-5c767.firebaseio.com/products.json', {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error('Response code is', response.status)
+      }
+
+      //парсю
+      const resData = await response.json();
+      const loadedProducts = [];
+
+      //перевожу объект в массив, с которым уже работает мой фронтенд
+      for (const key in resData) {
+        loadedProducts.push(new Product(key,
+          'u1',
+          resData[key].title,
+          resData[key].imageUrl,
+          resData[key].description,
+          resData[key].price))
+      }
+      //диспатчу массив товаров в стейты
+      dispatch({ type: SET_PRODUCTS, products: loadedProducts })
+    } catch (err) {
+      throw err;
     }
-    //диспатчу массив товаров в стейты
-    dispatch({ type: SET_PRODUCTS, products: [] })
   }
 }
 
