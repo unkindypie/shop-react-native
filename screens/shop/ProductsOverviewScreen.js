@@ -30,6 +30,17 @@ const ProductsOverviewScreen = props => {
     setIsLoading(false);
   }, [dispatch, setIsLoading, setError]);
 
+  //при заходе на страницу пытаюсь загрузить данные с сервера снова
+  useEffect(()=>{
+    //подписываю загрузку товаров на ивент фокуса на этом экране
+    const willFocusSub = props.navigation.addListener('willFocus', fetchData);
+
+    //clean-up funсtion, вызывается при разрушении/вызове компонента
+    return ()=>{
+      willFocusSub.remove();
+    }
+  }, [fetchData])
+
   useEffect(() => {
     
     fetchData();
