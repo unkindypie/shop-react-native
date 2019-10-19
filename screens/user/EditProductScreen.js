@@ -27,8 +27,9 @@ const formReducer = (state, action) => {
       [action.input]: action.value
     };
     const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid
+         ...state.inputValidities,
+      [action.input]:
+       action.isValid
     }
     let formIsValid = true;
     for (const key in updatedValidities) {
@@ -119,7 +120,7 @@ const EditProductScreen = props => {
 
   if(isLoading){
     return (
-      <View styles={styles.centered}>
+      <View style={styles.centered}>
         <ActivityIndicator size='large' color={Colors.primary}/>
       </View>
     )
