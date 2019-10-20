@@ -14,20 +14,22 @@ import Colors from '../../constants/Colors';
 //ActivityIndicator - анимация загрузки
 
 const ProductsOverviewScreen = props => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const products = useSelector(state => state.products.availableProducts);
   const dispatch = useDispatch();
 
   const fetchData = useCallback(async ()=>{
-    setIsLoading(true);
+    setError(null);
+    setIsRefreshing(true);
     try{
       await dispatch(productActions.fetchProducts());
     } catch(e){
       setError(e.message);
       setIsLoading(false);
     }
-    setIsLoading(false);
+    setIsRefreshing(false);
   }, [dispatch, setIsLoading, setError]);
 
   //при заходе на страницу пытаюсь загрузить данные с сервера снова
@@ -42,8 +44,10 @@ const ProductsOverviewScreen = props => {
   }, [fetchData])
 
   useEffect(() => {
-    
-    fetchData();
+    setIsLoading(true);
+    fetchData().then(()=>{
+      setIsLoading(false);
+    });
 
   }, [dispatch, fetchData]);
 
@@ -81,6 +85,8 @@ const ProductsOverviewScreen = props => {
 
   return (
     <FlatList
+      onRefresh={fetchData}
+      refreshing={isRefreshing}
       data={products}
       keyExtractor={item => item.id}
       renderItem={itemData => (
